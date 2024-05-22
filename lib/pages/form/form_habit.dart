@@ -172,7 +172,7 @@ class RadioImage extends StatelessWidget {
           height: 80,
           width: 80,
           child: Image.asset(
-              'assets/icons/${_item.isSelected ? _item.iconOff : _item.iconOn}.png'),
+              'assets/icons/difficulty/${_item.isSelected ? _item.iconOff : _item.iconOn}.png'),
           // color: Colors.transparent,
         ),
         const SizedBox(height: 10),
