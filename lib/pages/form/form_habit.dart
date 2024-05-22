@@ -1,30 +1,86 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:http/http.dart' as http;
+import 'package:soul_habit/config.dart';
 
 class FormHabit extends StatefulWidget {
-  const FormHabit({super.key});
+  final token;
+  const FormHabit({@required this.token, super.key});
 
   @override
   State<FormHabit> createState() => _FormHabitState();
 }
 
 class _FormHabitState extends State<FormHabit> {
+  late String userId;
+  final TextEditingController _habitTitle = TextEditingController();
+  final TextEditingController _habitNotes = TextEditingController();
+  final TextEditingController _habitDifficulty = TextEditingController();
+  final TextEditingController _habitResetCounter = TextEditingController();
   List<RadioModel> levelList = [];
   List<RadioModel> counterList = [];
-  bool? isChecked = false;
+  List? items;
+  // bool? isChecked = false;
 
   @override
   void initState() {
     super.initState();
+    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+    userId = jwtDecodedToken['_id'];
     // Difficulty
-    levelList.add(RadioModel(false, 'Trivial', 'trivial_off', 'trivial_on'));
+    levelList.add(RadioModel(true, 'Trivial', 'trivial_off', 'trivial_on'));
     levelList.add(RadioModel(false, 'Easy', 'easy_off', 'easy_on'));
     levelList.add(RadioModel(false, 'Medium', 'medium_off', 'medium_on'));
     levelList.add(RadioModel(false, 'Hard', 'hard_off', 'hard_on'));
 
     // Counter
-    counterList.add(RadioModel(false, 'Daily', '', ''));
+    counterList.add(RadioModel(true, 'Daily', '', ''));
     counterList.add(RadioModel(false, 'Weekly', '', ''));
     counterList.add(RadioModel(false, 'Monthly', '', ''));
+  }
+
+  void addHabit() async {
+    if (_habitTitle.text.isNotEmpty) {
+      var reqBody = {
+        "userId": userId,
+        "title": _habitTitle.text,
+        "note": _habitNotes.text,
+        "difficulty": _habitDifficulty.text,
+        "resetCounter": _habitResetCounter.text,
+        "counter": 0
+      };
+
+      var response = await http.post(Uri.parse(add_habit),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(reqBody));
+
+      var jsonResponse = jsonDecode(response.body);
+
+      print(jsonResponse['status'] + '\n' + reqBody.toString());
+
+      if (jsonResponse['status'] == 'success') {
+        _habitNotes.clear();
+        _habitNotes.clear();
+        Navigator.pop(context);
+      } else {
+        print(jsonResponse['message']);
+      }
+    }
+  }
+
+  void deleteItem(id) async {
+    var regBody = {"id": id};
+
+    var response = await http.post(Uri.parse(delete_habit),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(regBody));
+
+    var jsonResponse = jsonDecode(response.body);
+    if (jsonResponse['status']) {
+      // getHabitList(userId);
+    }
   }
 
   @override
@@ -41,7 +97,7 @@ class _FormHabitState extends State<FormHabit> {
               style: TextButton.styleFrom(
                   padding: const EdgeInsets.only(right: 25)),
               onPressed: () {
-                print("Create");
+                addHabit();
               },
               child: const Text('CREATE',
                   style: TextStyle(color: Colors.white, fontSize: 18)),
@@ -57,6 +113,7 @@ class _FormHabitState extends State<FormHabit> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
+                      controller: _habitTitle,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -70,14 +127,15 @@ class _FormHabitState extends State<FormHabit> {
                           )),
                     ),
                     const SizedBox(height: 20),
-                    const TextField(
+                    TextField(
+                      controller: _habitNotes,
                       maxLines: 3,
                       keyboardType: TextInputType.multiline,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                       ),
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           filled: true,
                           fillColor: Color.fromARGB(255, 67, 67, 67),
                           label: Text(
@@ -93,6 +151,7 @@ class _FormHabitState extends State<FormHabit> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: <Widget>[
+                  // Difficulty
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text('Difficulty',
@@ -111,6 +170,7 @@ class _FormHabitState extends State<FormHabit> {
                                   (states) => Colors.transparent),
                               onTap: () {
                                 print(e.buttonText);
+                                _habitDifficulty.text = e.buttonText;
                                 setState(() {
                                   for (var element in levelList) {
                                     element.isSelected = false;
@@ -123,6 +183,7 @@ class _FormHabitState extends State<FormHabit> {
                         .toList(),
                   ),
                   const SizedBox(height: 20),
+                  // Reset Counter
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text('Reset Counter',
@@ -141,6 +202,7 @@ class _FormHabitState extends State<FormHabit> {
                                   (states) => Colors.transparent),
                               onTap: () {
                                 print(e.buttonText);
+                                _habitResetCounter.text = e.buttonText;
                                 setState(() {
                                   for (var element in counterList) {
                                     element.isSelected = false;

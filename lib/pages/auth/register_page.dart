@@ -58,6 +58,7 @@ class _RegisterPage extends State<RegisterPage> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    passwordConfirmationController.dispose();
     super.dispose();
   }
 
@@ -213,7 +214,7 @@ class _RegisterPage extends State<RegisterPage> {
             const SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.visiblePassword,
-              controller: passwordController,
+              controller: passwordConfirmationController,
               obscureText: passToggle,
               style: const TextStyle(color: Colors.white, fontSize: 20),
               decoration: InputDecoration(

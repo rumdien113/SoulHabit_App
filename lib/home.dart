@@ -20,23 +20,31 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late String email;
   int currentTab = 0;
-  final List<Widget> screens = const [
-    Habit(),
-    Daily(),
-    ToDo(),
-    Shop(),
-  ];
+  final PageStorageBucket bucket = PageStorageBucket();
+  Widget currentScreen = Habit(token: "");
+  late List<Widget> screens;
 
   @override
   void initState() {
     super.initState();
     Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-
     email = jwtDecodedToken['email'];
+
+    screens = [
+      Habit(token: widget.token),
+      Daily(),
+      ToDo(),
+      Shop(),
+    ];
+
+    currentScreen = screens[0];
   }
 
-  final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = Habit();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   currentScreen = Habit(token: widget.token);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +65,10 @@ class _HomeState extends State<Home> {
         onPressed: () {
           switch (currentTab) {
             case 0:
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormHabit()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FormHabit(token: widget.token)));
               break;
             case 1:
               Navigator.push(context,
@@ -96,7 +106,7 @@ class _HomeState extends State<Home> {
                 minWidth: 40,
                 onPressed: () {
                   setState(() {
-                    currentScreen = Habit();
+                    currentScreen = Habit(token: widget.token);
                     currentTab = 0;
                   });
                 },
