@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soul_habit/home.dart';
+import 'package:soul_habit/pages/home/home.dart';
 import 'package:soul_habit/pages/auth/welcome_screen.dart';
 
 void main() async {
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light(),
         home: (token != null && JwtDecoder.isExpired(token) == false)
-            ? Home(token: token)
+            ? const Home()
             : const WelcomeScreen());
   }
 }

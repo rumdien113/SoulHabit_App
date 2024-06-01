@@ -1,43 +1,58 @@
 class HabitModel {
-  String _id = '';
-  String _title = '';
-  String _note = '';
-  String _difficulty = '';
-  String _resetCounter = '';
-  int _counter = 0;
+  final String? id;
+  final String? title;
+  final String? note;
+  final String? difficulty;
+  final String? resetCounter;
+  final int? counter;
 
-  Habit({
-    String? id,
-    required String title,
-    required String note,
-    required String difficulty,
-    required String resetCounter,
-    required int counter,
-  }) {
-    if (id != null) _id = id;
-    _title = title;
-    _note = note;
-    _difficulty = difficulty;
-    _resetCounter = resetCounter;
-    _counter = counter;
+  HabitModel({
+    this.id,
+    this.title,
+    this.note,
+    this.difficulty,
+    this.resetCounter,
+    this.counter,
+  });
+
+  factory HabitModel.fromJson(Map<String, dynamic> json) {
+    return HabitModel(
+      id: json['_id'] as String?,
+      title: json['title'] as String?,
+      note: json['note'] as String?,
+      difficulty: json['difficulty'] as String?,
+      resetCounter: json['resetCounter'] as String?,
+      counter: json['counter'] as int?,
+    );
   }
 
-  get id => _id;
-  get title => _title;
-  get note => _note;
-  get difficulty => _difficulty;
-  get resetCounter => _resetCounter;
-  get counter => _counter;
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'note': note,
+      'difficulty': difficulty,
+      'resetCounter': resetCounter,
+      'counter': counter,
+    };
+  }
 
-  set id(id) => _id = id;
-  set title(title) => _title = title;
-  set note(note) => _note = note;
-  set difficulty(difficulty) => _difficulty = difficulty;
-  set resetCounter(resetCounter) => _resetCounter = resetCounter;
-  set counter(counter) => _counter = counter;
+  get habit_id => id;
+  get habit_title => title;
+  get habit_note => note;
+  get habit_difficulty => difficulty;
+  get habit_resetCounter => resetCounter;
+  get habit_counter => counter;
+
+  set habit_id(id) => id = id;
+  set habit_title(title) => title = title;
+  set habit_note(note) => note = note;
+  set habit_difficulty(difficulty) => difficulty = difficulty;
+  set habit_resetCounter(resetCounter) => resetCounter = resetCounter;
+  set habit_counter(counter) => counter = counter;
 
   @override
   String toString() {
-    return 'Habit{_id: $_id \n _title: $_title \n _note: $_note \n _difficulty: $_difficulty \n _resetCounter: $_resetCounter \n _counter: $_counter}';
+    return 'HabitModel{ id: $id, title: $title, note: $note, difficulty: $difficulty, resetCounter: $resetCounter, counter: $counter }';
   }
 }

@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
-import 'package:soul_habit/config.dart';
+import 'package:soul_habit/services/local/shared_prefs.dart';
+import 'package:soul_habit/utils/app_constant.dart';
 
 class FormHabit extends StatefulWidget {
-  final token;
-  const FormHabit({@required this.token, super.key});
+  const FormHabit({super.key});
 
   @override
   State<FormHabit> createState() => _FormHabitState();
@@ -27,7 +27,8 @@ class _FormHabitState extends State<FormHabit> {
   @override
   void initState() {
     super.initState();
-    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+    Map<String, dynamic> jwtDecodedToken =
+        JwtDecoder.decode(SharedPrefs.accessToken);
     userId = jwtDecodedToken['_id'];
     // Difficulty
     levelList.add(RadioModel(true, 'Trivial', 'trivial_off', 'trivial_on'));
@@ -52,7 +53,7 @@ class _FormHabitState extends State<FormHabit> {
         "counter": 0
       };
 
-      var response = await http.post(Uri.parse(add_habit),
+      var response = await http.post(Uri.parse(AppConstant.add_habit),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(reqBody));
 
@@ -73,7 +74,7 @@ class _FormHabitState extends State<FormHabit> {
   void deleteItem(id) async {
     var regBody = {"id": id};
 
-    var response = await http.post(Uri.parse(delete_habit),
+    var response = await http.post(Uri.parse(AppConstant.delete_habit),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(regBody));
 

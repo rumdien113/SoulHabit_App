@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soul_habit/config.dart';
-import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:soul_habit/models/request/login_request_model.dart';
+import 'package:soul_habit/services/auth_services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:soul_habit/home.dart';
+import 'package:soul_habit/pages/home/home.dart';
+import 'package:soul_habit/services/local/shared_prefs.dart';
 
+import '../../models/response/login_response_model.dart';
 import 'welcome_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,45 +22,66 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool passToggle = true;
-  late SharedPreferences pref;
-
-  void loginUser() async {
-    try {
-      if (emailController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty) {
-        var reqBody = {
-          "email": emailController.text,
-          "password": passwordController.text
-        };
-        print(reqBody);
-        var response = await http.post(Uri.parse(login),
-            headers: {"Content-Type": "application/json"},
-            body: jsonEncode(reqBody));
-        print('Response status: ${response.statusCode}');
-        print(response);
-        var jsonResponse = jsonDecode(response.body);
-        if (jsonResponse['status']) {
-          var myToken = jsonResponse['token'];
-          pref.setString('token', myToken);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Home(token: myToken)));
-        } else {
-          print('Something went wrong');
-        }
-      }
-    } on Exception catch (err) {
-      print(err);
-    }
-  }
+  APIServices authServices = APIServices();
+  final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    initSharedPref();
+    _initializePrefs();
   }
 
-  void initSharedPref() async {
-    pref = await SharedPreferences.getInstance();
+  Future<void> _initializePrefs() async {
+    await SharedPrefs.initialize();
+  }
+
+  Future<void> _submitLogin() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      final body = LoginRequestModel(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+      await authServices.login(body).then((response) async {
+        if (response.statusCode == 200) {
+          Map<String, dynamic> res = JwtDecoder.decode(response.body);
+          Map<String, dynamic> resBody = jsonDecode(response.body);
+          final token = resBody['token'];
+          final userID = res['_id'];
+          final username = res['username'];
+          if (token != null && userID != null && username != null) {
+            await SharedPrefs.setToken(token);
+            SharedPrefs.setUserId(userID);
+            SharedPrefs.setUsername(username);
+            // print('Token: ${SharedPrefs.token}');
+            // print('User ID: ${SharedPrefs.user_id}');
+            // print('Username: ${SharedPrefs.Username}');
+          }
+
+          Fluttertoast.showToast(
+            msg: "Login successful!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => const Home()));
+        } else {
+          final errorResponse = jsonDecode(response.body);
+          String message = errorResponse['message'];
+          Fluttertoast.showToast(
+            msg: errorResponse['message'] ?? 'Something went wrong',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -67,6 +90,60 @@ class _LoginPageState extends State<LoginPage> {
     passwordController.dispose();
     super.dispose();
   }
+
+  // Future<void> _submitLogin() async {
+  //   if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+  //     final body = LoginRequestModel(
+  //       email: emailController.text.trim(),
+  //       password: passwordController.text,
+  //     );
+  //     await authServices.login(body).then((response) async {
+  //       if (response.statusCode == 200) {
+  //         final res = jsonDecode(response.body);
+  //         await SharedPrefs.setToken(res['token']);
+  //         SharedPrefs.setUserId(res['_id']);
+  //         SharedPrefs.setUsername(res['username']);
+  //         print('Token: ${SharedPrefs.accessToken}');
+  //         print('Token: ${SharedPrefs.userId}');
+  //         print('Token: ${SharedPrefs.username}');
+  //         Navigator.push(
+  //             context, MaterialPageRoute(builder: (context) => const Home()));
+  //       } else {
+  //         print('Something went wrong');
+  //       }
+  //     });
+  //   }
+  // }
+
+  // void loginUser() async {
+  //   try {
+  //     if (emailController.text.isNotEmpty &&
+  //         passwordController.text.isNotEmpty) {
+  //       var reqBody = {
+  //         "email": emailController.text,
+  //         "password": passwordController.text
+  //       };
+  //       print(reqBody);
+  //       var response = await http.post(Uri.parse(AppConstant.login),
+  //           headers: {"Content-Type": "application/json"},
+  //           body: jsonEncode(reqBody));
+  //       print('Response status: ${response.statusCode}');
+  //       print(response);
+  //       var jsonResponse = jsonDecode(response.body);
+  //       if (jsonResponse['status']) {
+  //         var myToken = jsonResponse['token'];
+  //         pref.setString('token', myToken);
+  //         print('Token: $myToken');
+  //         Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => Home()));
+  //       } else {
+  //         print('Something went wrong');
+  //       }
+  //     }
+  //   } on Exception catch (err) {
+  //     print(err);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +173,13 @@ class _LoginPageState extends State<LoginPage> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            _buildInputFiles(),
-          ],
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              _buildInputFiles(),
+            ],
+          ),
         ),
       ),
     );
@@ -221,7 +301,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () => loginUser(),
+              onPressed: () => _submitLogin(),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(200, 70),
                 backgroundColor: const Color.fromARGB(170, 179, 179, 179),

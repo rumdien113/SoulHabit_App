@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:soul_habit/NavDrawer.dart';
+import 'package:soul_habit/components/NavDrawer.dart';
 import 'package:soul_habit/pages/form/form_daily.dart';
 import 'package:soul_habit/pages/form/form_habit.dart';
 import 'package:soul_habit/pages/form/form_todo.dart';
-import 'pages/home/daily.dart';
-import 'pages/home/habit.dart';
-import 'pages/home/todo.dart';
-import 'pages/home/shop.dart';
+import 'package:soul_habit/services/local/shared_prefs.dart';
+import 'daily.dart';
+import 'habit.dart';
+import 'todo.dart';
+import 'shop.dart';
 
 class Home extends StatefulWidget {
-  final token;
-  const Home({@required this.token, super.key});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  late String email;
+  late String username = SharedPrefs.username;
   int currentTab = 0;
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = Habit(token: "");
+  Widget currentScreen = const Habit();
   late List<Widget> screens;
 
   @override
   void initState() {
     super.initState();
-    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-    email = jwtDecodedToken['email'];
 
-    screens = [
-      Habit(token: widget.token),
+    screens = const [
+      Habit(),
       Daily(),
       ToDo(),
       Shop(),
@@ -40,19 +37,14 @@ class _HomeState extends State<Home> {
     currentScreen = screens[0];
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   currentScreen = Habit(token: widget.token);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1C),
       drawer: const NavDrawer(),
       appBar: AppBar(
-        title: Text(email, style: const TextStyle(color: Colors.white)),
+        title: Text(SharedPrefs.Username ?? '',
+            style: const TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF1C1C1C),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -65,10 +57,8 @@ class _HomeState extends State<Home> {
         onPressed: () {
           switch (currentTab) {
             case 0:
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FormHabit(token: widget.token)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const FormHabit()));
               break;
             case 1:
               Navigator.push(context,
@@ -106,7 +96,7 @@ class _HomeState extends State<Home> {
                 minWidth: 40,
                 onPressed: () {
                   setState(() {
-                    currentScreen = Habit(token: widget.token);
+                    currentScreen = const Habit();
                     currentTab = 0;
                   });
                 },

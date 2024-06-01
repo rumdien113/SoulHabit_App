@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TaskHabit extends StatefulWidget {
-  const TaskHabit({super.key});
+import '../models/habit.model.dart';
 
+class TaskHabit extends StatefulWidget {
+  const TaskHabit({super.key, required this.task});
+
+  final HabitModel task;
   @override
   _TaskHabitState createState() => _TaskHabitState();
 }
@@ -51,16 +54,15 @@ class _TaskHabitState extends State<TaskHabit> {
                   ),
                 ),
                 onPressed: () => print("task description"),
-                child: const Column(children: <Widget>[
+                child: Column(children: <Widget>[
                   Expanded(
                       child: SizedBox(
                           width: 325,
-                          child: Text(
-                              "Chia sẻ tại buổi lễ ra mắt, tân HLV trưởng ĐT Việt Nam - ông Kim Sang Sik mở đầu bài phát biểu với triết lý bóng đá của bản thân mình:",
+                          child: Text(widget.task.habit_title,
                               maxLines: 6,
                               overflow: TextOverflow.ellipsis,
                               textDirection: TextDirection.ltr,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 18, color: Colors.grey)))),
                   Align(
                       alignment: Alignment.bottomRight,
@@ -70,13 +72,14 @@ class _TaskHabitState extends State<TaskHabit> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Icon(Icons.double_arrow_sharp, color: Colors.grey),
+                            const Icon(Icons.double_arrow_sharp,
+                                color: Colors.grey),
                             Text(
-                              '17',
+                              widget.task.habit_counter.toString(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 15),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 15),
                             )
                           ],
                         ),

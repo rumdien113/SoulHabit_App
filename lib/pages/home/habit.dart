@@ -1,59 +1,76 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:http/http.dart' as http;
 // import 'package:todo_app_frontend/components_test/task_habit_test.dart';
 import 'package:soul_habit/components/task_habit.dart';
-import 'package:soul_habit/config.dart';
+import 'package:soul_habit/services/habit_services.dart';
+import 'package:soul_habit/services/local/shared_prefs.dart';
 import 'package:soul_habit/models/habit.model.dart';
+import 'package:http/http.dart' as http;
+import 'package:soul_habit/utils/app_constant.dart';
+
+// Future<List<HabitModel>> fetchHabit(http.Client client) async {
+//   final response = await client
+//       .get(Uri.parse(AppConstant.get_habit_list + SharedPrefs.user_id!));
+//   return compute(parseHabit, response.body);
+// }
+
+// List<HabitModel> parseHabit(String responseBody) {
+//   final parsed =
+//       (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+//   return parsed.map<HabitModel>((json) => HabitModel.fromJson(json)).toList();
+// }
 
 class Habit extends StatefulWidget {
-  final token;
-  const Habit({@required this.token, super.key});
+  const Habit({super.key});
 
   @override
   State<Habit> createState() => _HabitState();
 }
 
 class _HabitState extends State<Habit> {
-  late String userId;
-  List<HabitModel> items = [];
+  List<HabitModel> taskList = [];
+  HabitAPI habitAPI = HabitAPI();
 
   @override
   void initState() {
+    _getHabitList();
     super.initState();
-    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-
-    userId = jwtDecodedToken['_id'];
-    // getHabitList(userId);
   }
 
-  // void getHabitList(userId) async {
-  //   print('userID: $userId');
-
-  //   var response = await http.get(Uri.parse(get_habit_list + userId),
-  //       headers: {"Content-Type": "application/json"});
-
-  //   if (response.statusCode == 200) {
-  //     var jsonResponse = jsonDecode(response.body);
-  //     items = jsonResponse['success'];
-  //     print(items);
-  //   } else {
-  //     print(response.statusCode);
-  //   }
-
-  //   setState(() {});
-  // }
+  void _getHabitList() {
+    habitAPI.getHabitList(SharedPrefs.user_id!).then((response) {
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        List<dynamic> listJson = jsonResponse['success'];
+        List<HabitModel> tempTaskList =
+            listJson.map((i) => HabitModel.fromJson(i)).toList();
+        setState(() {
+          taskList = tempTaskList;
+        });
+      } else {
+        print('Failed to load data from API');
+      }
+    }).catchError((onError) {
+      print('Error occurredL: $onError');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1C1C1C),
       body: Center(
-          child: ListView(
-        children: const [TaskHabit()],
-      )),
+          child: ListView.builder(
+            itemCount: taskList.length,
+            itemBuilder: (context, index) {
+              return TaskHabit(task: taskList[index]);
+            }
+          )
+              
+        // children: const [TaskHabit()],
+      )
     );
   }
 }

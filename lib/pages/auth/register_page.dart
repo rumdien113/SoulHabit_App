@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:soul_habit/config.dart';
+import 'package:soul_habit/pages/auth/login_page.dart';
+import 'package:soul_habit/utils/app_constant.dart';
 import 'package:http/http.dart' as http;
 
 import 'welcome_screen.dart';
@@ -15,6 +16,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPage extends State<RegisterPage> {
+  late TextEditingController usernameController;
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController passwordConfirmationController;
@@ -23,11 +25,12 @@ class _RegisterPage extends State<RegisterPage> {
   void registerUser() async {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       var regBody = {
+        "username": usernameController.text,
         "email": emailController.text,
         "password": passwordController.text,
       };
 
-      var response = await http.post(Uri.parse(register),
+      var response = await http.post(Uri.parse(AppConstant.register),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(regBody));
 
@@ -37,7 +40,7 @@ class _RegisterPage extends State<RegisterPage> {
 
       if (jsonResponse['status']) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => RegisterPage()));
+            context, MaterialPageRoute(builder: (context) => const LoginPage()));
       } else {
         print("something went wrong");
       }
@@ -48,6 +51,7 @@ class _RegisterPage extends State<RegisterPage> {
 
   @override
   void initState() {
+    usernameController = TextEditingController();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     passwordConfirmationController = TextEditingController();
@@ -56,6 +60,7 @@ class _RegisterPage extends State<RegisterPage> {
 
   @override
   void dispose() {
+    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     passwordConfirmationController.dispose();
@@ -147,6 +152,50 @@ class _RegisterPage extends State<RegisterPage> {
                         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_^ {|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                     .hasMatch(value);
                 if (!emailValid) {
+                  Fluttertoast.showToast(
+                      msg: "Email is not valid",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              keyboardType: TextInputType.name,
+              controller: usernameController,
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+              decoration: const InputDecoration(
+                  suffixIcon: Icon(
+                    Icons.person,
+                    color: Colors.grey,
+                  ),
+                  label: Text(
+                    "Username",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white),
+                  )),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  Fluttertoast.showToast(
+                      msg: "Username cannot be empty",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+                bool usernameValid = RegExp(
+                        r"/^[^\s]+$/")
+                    .hasMatch(value);
+                if (!usernameValid) {
                   Fluttertoast.showToast(
                       msg: "Email is not valid",
                       toastLength: Toast.LENGTH_SHORT,
