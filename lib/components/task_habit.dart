@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/habit.model.dart';
+import '../pages/form/form_habit.dart';
 
 class TaskHabit extends StatefulWidget {
   const TaskHabit({super.key, required this.task});
@@ -53,12 +54,27 @@ class _TaskHabitState extends State<TaskHabit> {
                     borderRadius: BorderRadius.zero,
                   ),
                 ),
-                onPressed: () => print("task description"),
+                onPressed: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  FormHabit(widget.task.habit_id!)))
+                    },
                 child: Column(children: <Widget>[
                   Expanded(
                       child: SizedBox(
                           width: 325,
                           child: Text(widget.task.habit_title,
+                              maxLines: 6,
+                              overflow: TextOverflow.ellipsis,
+                              textDirection: TextDirection.ltr,
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.white)))),
+                  Expanded(
+                      child: SizedBox(
+                          width: 325,
+                          child: Text(widget.task.habit_note,
                               maxLines: 6,
                               overflow: TextOverflow.ellipsis,
                               textDirection: TextDirection.ltr,

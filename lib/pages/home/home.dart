@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
       backgroundColor: const Color(0xFF1C1C1C),
       drawer: const NavDrawer(),
       appBar: AppBar(
-        title: Text(SharedPrefs.Username ?? '',
+        title: Text(SharedPrefs.Username ?? 'username',
             style: const TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF1C1C1C),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
           switch (currentTab) {
             case 0:
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormHabit()));
+                  MaterialPageRoute(builder: (context) => const FormHabit('')));
               break;
             case 1:
               Navigator.push(context,

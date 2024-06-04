@@ -1,20 +1,21 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:http/http.dart' as http;
+import 'package:soul_habit/models/habit.model.dart';
+import 'package:soul_habit/pages/home/habit.dart';
+import 'package:soul_habit/pages/home/home.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
-import 'package:soul_habit/utils/app_constant.dart';
+import 'package:soul_habit/services/remote/habit_services.dart';
 
 class FormHabit extends StatefulWidget {
-  const FormHabit({super.key});
+  const FormHabit(this.habit_id, {super.key});
 
+  final String habit_id;
   @override
   State<FormHabit> createState() => _FormHabitState();
 }
 
 class _FormHabitState extends State<FormHabit> {
-  late String userId;
   final TextEditingController _habitTitle = TextEditingController();
   final TextEditingController _habitNotes = TextEditingController();
   final TextEditingController _habitDifficulty = TextEditingController();
@@ -22,14 +23,12 @@ class _FormHabitState extends State<FormHabit> {
   List<RadioModel> levelList = [];
   List<RadioModel> counterList = [];
   List? items;
+  HabitAPI habitServices = HabitAPI();
   // bool? isChecked = false;
 
   @override
   void initState() {
     super.initState();
-    Map<String, dynamic> jwtDecodedToken =
-        JwtDecoder.decode(SharedPrefs.accessToken);
-    userId = jwtDecodedToken['_id'];
     // Difficulty
     levelList.add(RadioModel(true, 'Trivial', 'trivial_off', 'trivial_on'));
     levelList.add(RadioModel(false, 'Easy', 'easy_off', 'easy_on'));
@@ -44,44 +43,42 @@ class _FormHabitState extends State<FormHabit> {
 
   void addHabit() async {
     if (_habitTitle.text.isNotEmpty) {
-      var reqBody = {
-        "userId": userId,
-        "title": _habitTitle.text,
-        "note": _habitNotes.text,
-        "difficulty": _habitDifficulty.text,
-        "resetCounter": _habitResetCounter.text,
-        "counter": 0
-      };
-
-      var response = await http.post(Uri.parse(AppConstant.add_habit),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(reqBody));
-
-      var jsonResponse = jsonDecode(response.body);
-
-      print(jsonResponse['status'] + '\n' + reqBody.toString());
-
-      if (jsonResponse['status'] == 'success') {
-        _habitNotes.clear();
-        _habitNotes.clear();
-        Navigator.pop(context);
-      } else {
-        print(jsonResponse['message']);
-      }
+      final body = HabitModel(
+          userId: SharedPrefs.UserID,
+          title: _habitTitle.text.trim(),
+          note: _habitNotes.text.trim(),
+          difficulty: _habitDifficulty.text,
+          resetCounter: _habitResetCounter.text,
+          counter: 0);
+      await habitServices.addHabitTask(body).then((response) {
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          if (jsonResponse['status']) {
+            _habitTitle.clear();
+            _habitNotes.clear();
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => const Home()));
+          }
+        } else {
+          final data = jsonDecode(response.body);
+          final message = data['message'];
+          print(message);
+        }
+      });
     }
   }
 
-  void deleteItem(id) async {
-    var regBody = {"id": id};
-
-    var response = await http.post(Uri.parse(AppConstant.delete_habit),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(regBody));
-
-    var jsonResponse = jsonDecode(response.body);
-    if (jsonResponse['status']) {
-      // getHabitList(userId);
-    }
+  void deleteItem(String id) async {
+    await habitServices.deleteHabitTask(id).then((response) {
+      if (response.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Home()));
+      } else {
+        final data = jsonDecode(response.body);
+        final message = data['message'];
+        print(message);
+      }
+    });
   }
 
   @override
@@ -94,6 +91,17 @@ class _FormHabitState extends State<FormHabit> {
           backgroundColor: const Color(0xFF6132B4),
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
+            widget.habit_id != ''
+                ? TextButton(
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.only(right: 25)),
+                    onPressed: () {
+                      deleteItem(widget.habit_id);
+                    },
+                    child: const Text('DELETE',
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                  )
+                : Container(),
             TextButton(
               style: TextButton.styleFrom(
                   padding: const EdgeInsets.only(right: 25)),

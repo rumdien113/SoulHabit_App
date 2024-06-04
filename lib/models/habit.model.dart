@@ -1,5 +1,6 @@
 class HabitModel {
   final String? id;
+  final String? userId;
   final String? title;
   final String? note;
   final String? difficulty;
@@ -8,6 +9,7 @@ class HabitModel {
 
   HabitModel({
     this.id,
+    this.userId,
     this.title,
     this.note,
     this.difficulty,
@@ -18,6 +20,7 @@ class HabitModel {
   factory HabitModel.fromJson(Map<String, dynamic> json) {
     return HabitModel(
       id: json['_id'] as String?,
+      userId: json['userId'] as String?,
       title: json['title'] as String?,
       note: json['note'] as String?,
       difficulty: json['difficulty'] as String?,
@@ -29,6 +32,7 @@ class HabitModel {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
+      'userId': userId,
       'title': title,
       'note': note,
       'difficulty': difficulty,
@@ -38,6 +42,7 @@ class HabitModel {
   }
 
   get habit_id => id;
+  get habit_userId => userId;
   get habit_title => title;
   get habit_note => note;
   get habit_difficulty => difficulty;
@@ -45,6 +50,7 @@ class HabitModel {
   get habit_counter => counter;
 
   set habit_id(id) => id = id;
+  set habit_userId(userId) => userId = userId;
   set habit_title(title) => title = title;
   set habit_note(note) => note = note;
   set habit_difficulty(difficulty) => difficulty = difficulty;
@@ -53,6 +59,6 @@ class HabitModel {
 
   @override
   String toString() {
-    return 'HabitModel{ id: $id, title: $title, note: $note, difficulty: $difficulty, resetCounter: $resetCounter, counter: $counter }';
+    return 'HabitModel{ id: $id, userId: $userId, $title, note: $note, difficulty: $difficulty, resetCounter: $resetCounter, counter: $counter }';
   }
 }
