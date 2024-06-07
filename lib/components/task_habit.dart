@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soul_habit/services/remote/habit_services.dart';
 
 import '../models/habit.model.dart';
 import '../pages/form/form_habit.dart';
@@ -13,6 +14,30 @@ class TaskHabit extends StatefulWidget {
 
 class _TaskHabitState extends State<TaskHabit> {
   bool isChecked = false;
+  int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _counter = widget.task.habit_counter;
+  }
+
+  HabitAPI habitServices = HabitAPI();
+
+  Future<void> _Counter(String slug) async {
+    await habitServices.counter(widget.task.habit_id!, slug).then((value) => {
+          if (value.statusCode == 200)
+            {
+              setState(() {
+                if (slug == 'increase') {
+                  _counter++;
+                } else {
+                  _counter--;
+                }
+              })
+            }
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +56,7 @@ class _TaskHabitState extends State<TaskHabit> {
           children: <Widget>[
             // btn ADD
             ElevatedButton(
-                onPressed: () => print("add num habit"),
+                onPressed: () => _Counter('increase'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(10),
                   backgroundColor: Colors.grey[800],
@@ -91,7 +116,7 @@ class _TaskHabitState extends State<TaskHabit> {
                             const Icon(Icons.double_arrow_sharp,
                                 color: Colors.grey),
                             Text(
-                              widget.task.habit_counter.toString(),
+                              _counter.toString(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -103,7 +128,7 @@ class _TaskHabitState extends State<TaskHabit> {
                 ])),
             // btn SUB
             ElevatedButton(
-                onPressed: () => print("remove num habit"),
+                onPressed: () => _Counter('decrease'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(10),
                   backgroundColor: Colors.grey[800],

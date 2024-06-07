@@ -72,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
               context, MaterialPageRoute(builder: (context) => const Home()));
         } else {
           final errorResponse = jsonDecode(response.body);
-          String message = errorResponse['message'];
           Fluttertoast.showToast(
             msg: errorResponse['message'] ?? 'Something went wrong',
             toastLength: Toast.LENGTH_SHORT,

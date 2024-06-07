@@ -9,6 +9,8 @@ abstract class HabitServices {
   Future<http.Response> getHabitList(String userID);
   Future<http.Response> addHabitTask(HabitModel body);
   Future<http.Response> deleteHabitTask(String taskID);
+  Future<http.Response> updateHabitTask(String taskID);
+  Future<http.Response> counter(String taskId, String slug);
 }
 
 class HabitAPI implements HabitServices {
@@ -21,7 +23,7 @@ class HabitAPI implements HabitServices {
   @override
   Future<http.Response> getHabitList(String userID) async {
     return await _httpClient.get(
-      Uri.parse(AppConstant.get_habit_list + userID),
+      Uri.parse(AppConstant.get_habit_list(userID)),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json'
@@ -44,13 +46,35 @@ class HabitAPI implements HabitServices {
 
   @override
   Future<http.Response> deleteHabitTask(String taskID) async {
-    final response =  await _httpClient.delete(
-      Uri.parse(AppConstant.delete_habit + taskID),
+    final response = await _httpClient.delete(
+      Uri.parse(AppConstant.delete_habit(taskID)),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Accept': 'application/json'
       },
     );
+    return response;
+  }
+
+  @override
+  Future<http.Response> updateHabitTask(String id) async {
+    final response = await _httpClient.put(
+        Uri.parse(AppConstant.update_habit(id)),
+        headers: {
+          'content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json'
+        });
+    return response;
+  }
+
+  @override
+  Future<http.Response> counter(String id, String slug) async {
+    final response = await _httpClient.put(
+        Uri.parse(AppConstant.counter(id, slug)),
+        headers: {
+          'content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json'
+        });
     return response;
   }
 }

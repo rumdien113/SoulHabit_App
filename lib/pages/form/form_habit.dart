@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:soul_habit/models/habit.model.dart';
-import 'package:soul_habit/pages/home/habit.dart';
 import 'package:soul_habit/pages/home/home.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
