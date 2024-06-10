@@ -20,8 +20,9 @@ class _HabitState extends State<Habit> {
 
   @override
   void initState() {
-    _getHabitList();
     super.initState();
+    _getHabitList();
+    print('tasklist 3: $taskList');
   }
 
   void _getHabitList() {
@@ -33,27 +34,26 @@ class _HabitState extends State<Habit> {
             listJson.map((i) => HabitModel.fromJson(i)).toList();
         setState(() {
           taskList = tempTaskList;
+          print('tastList 1: $taskList');
         });
       } else {
         print('Failed to load data from API');
       }
-    }).catchError((onError) {
-      print('Error occurredL: $onError');
+    }).catchError((error) {
+      print('Error: $error');
     });
+    print('tastList 2: $taskList');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1C),
-      body: Center(
-          child: ListView.builder(
-            itemCount: taskList.length,
-            itemBuilder: (context, index) {
-              return TaskHabit(task: taskList[index]);
-            }
-          )
-      )
-    );
+        backgroundColor: const Color(0xFF1C1C1C),
+        body: Center(
+            child: ListView.builder(
+                itemCount: taskList.length,
+                itemBuilder: (context, index) {
+                  return TaskHabit(task: taskList[index]);
+                })));
   }
 }
