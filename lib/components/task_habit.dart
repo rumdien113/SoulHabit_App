@@ -83,8 +83,7 @@ class _TaskHabitState extends State<TaskHabit> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  FormHabit(widget.task.habit_id!)))
+                              builder: (context) => FormHabit(widget.task)))
                     },
                 child: Column(children: <Widget>[
                   Expanded(

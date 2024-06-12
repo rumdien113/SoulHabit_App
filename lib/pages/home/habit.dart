@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-// import 'package:todo_app_frontend/components_test/task_habit_test.dart';
 import 'package:soul_habit/components/task_habit.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
@@ -22,7 +21,6 @@ class _HabitState extends State<Habit> {
   void initState() {
     super.initState();
     _getHabitList();
-    print('tasklist 3: $taskList');
   }
 
   void _getHabitList() {
@@ -34,7 +32,6 @@ class _HabitState extends State<Habit> {
             listJson.map((i) => HabitModel.fromJson(i)).toList();
         setState(() {
           taskList = tempTaskList;
-          print('tastList 1: $taskList');
         });
       } else {
         print('Failed to load data from API');
@@ -42,7 +39,6 @@ class _HabitState extends State<Habit> {
     }).catchError((error) {
       print('Error: $error');
     });
-    print('tastList 2: $taskList');
   }
 
   @override

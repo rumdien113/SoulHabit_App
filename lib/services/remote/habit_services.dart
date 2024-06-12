@@ -9,7 +9,7 @@ abstract class HabitServices {
   Future<http.Response> getHabitList(String userID);
   Future<http.Response> addHabitTask(HabitModel body);
   Future<http.Response> deleteHabitTask(String taskID);
-  Future<http.Response> updateHabitTask(String taskID);
+  Future<http.Response> updateHabitTask(HabitModel body, String id);
   Future<http.Response> counter(String taskId, String slug);
 }
 
@@ -57,12 +57,14 @@ class HabitAPI implements HabitServices {
   }
 
   @override
-  Future<http.Response> updateHabitTask(String id) async {
-    final response = await _httpClient
-        .put(Uri.parse(AppConstant.update_habit(id)), headers: {
-      'content-Type': 'application/json; charset=UTF-8',
-      'Accept': 'application/json'
-    });
+  Future<http.Response> updateHabitTask(HabitModel body, String id) async {
+    final response = await _httpClient.put(
+        Uri.parse(AppConstant.update_habit(id)),
+        headers: {
+          'content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json'
+        },
+        body: jsonEncode(body.toJson()));
     return response;
   }
 
