@@ -5,13 +5,15 @@ class SharedPrefs {
   static const String accessToken = 'accessToken';
   static const String userId = '_id';
   static const String username = 'username';
+  static const String email = 'email';
   // static const String avatarImagePathKey = 'avatarImagePath';
 
   //print token, _id, username
   static void printAll() {
     print('Token: ${token}');
-    print('User ID: ${user_id}');
+    print('User ID: ${UserID}');
     print('Username: ${Username}');
+    print('Email: ${email}');
   }
 
   static Future<void> initialize() async {
@@ -37,7 +39,7 @@ class SharedPrefs {
     _prefs.setString(userId, id);
   }
 
-  static String? get user_id {
+  static String? get UserID {
     return _prefs.getString(userId);
   }
 
@@ -49,14 +51,26 @@ class SharedPrefs {
     return _prefs.getString(username);
   }
 
+  static void setEmail(String e) {
+    _prefs.setString(email, e);
+  }
+
+  static String? get Email {
+    return _prefs.getString(email);
+  }
+
   static bool get isLogin => token?.isNotEmpty ?? false;
 
   static void removeSeason() {
     print('Removing user session token: $token');
-    print('Removing user session user_id: $user_id');
+    print('Removing user session user_id: $UserID');
+    print('Removing user session email: $email');
+    print('Removing user session username: $username');
     // print('Removing user session avatar: $avatarImagePath');
     _prefs.remove(accessToken);
     _prefs.remove(userId);
+    _prefs.remove(email);
+    _prefs.remove(username);
     // _prefs.remove(avatarImagePathKey);
     print('User session token and user_id removed successfully.');
   }

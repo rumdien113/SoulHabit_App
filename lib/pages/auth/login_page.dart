@@ -3,12 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:soul_habit/models/request/login_request_model.dart';
-import 'package:soul_habit/services/auth_services.dart';
+import 'package:soul_habit/services/remote/auth_services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:soul_habit/pages/home/home.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
 
-import '../../models/response/login_response_model.dart';
 import 'welcome_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -48,13 +47,16 @@ class _LoginPageState extends State<LoginPage> {
           final token = resBody['token'];
           final userID = res['_id'];
           final username = res['username'];
-          if (token != null && userID != null && username != null) {
+          final email = res['email'];
+          if (token != null && userID != null && username != null && email != null) {
             await SharedPrefs.setToken(token);
             SharedPrefs.setUserId(userID);
             SharedPrefs.setUsername(username);
+            SharedPrefs.setEmail(email);
             // print('Token: ${SharedPrefs.token}');
-            // print('User ID: ${SharedPrefs.user_id}');
+            // print('User ID: ${SharedPrefs.UserID}');
             // print('Username: ${SharedPrefs.Username}');
+            // print('Email: ${SharedPrefs.Email}');
           }
 
           Fluttertoast.showToast(
@@ -70,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
               context, MaterialPageRoute(builder: (context) => const Home()));
         } else {
           final errorResponse = jsonDecode(response.body);
-          String message = errorResponse['message'];
           Fluttertoast.showToast(
             msg: errorResponse['message'] ?? 'Something went wrong',
             toastLength: Toast.LENGTH_SHORT,

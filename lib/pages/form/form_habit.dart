@@ -1,86 +1,119 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:http/http.dart' as http;
+import 'package:soul_habit/models/task_models/habit.model.dart';
+import 'package:soul_habit/pages/home/home.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
-import 'package:soul_habit/utils/app_constant.dart';
+import 'package:soul_habit/services/remote/habit_services.dart';
 
 class FormHabit extends StatefulWidget {
-  const FormHabit({super.key});
+  const FormHabit(this.task, {super.key});
 
+  final HabitModel? task;
   @override
   State<FormHabit> createState() => _FormHabitState();
 }
 
 class _FormHabitState extends State<FormHabit> {
-  late String userId;
-  final TextEditingController _habitTitle = TextEditingController();
-  final TextEditingController _habitNotes = TextEditingController();
-  final TextEditingController _habitDifficulty = TextEditingController();
-  final TextEditingController _habitResetCounter = TextEditingController();
+  late final TextEditingController _habitTitle =
+      TextEditingController(text: widget.task?.habit_title);
+  late final TextEditingController _habitNotes =
+      TextEditingController(text: widget.task?.habit_note);
+  late final TextEditingController _habitDifficulty = TextEditingController();
+  late final TextEditingController _habitResetCounter = TextEditingController();
   List<RadioModel> levelList = [];
   List<RadioModel> counterList = [];
   List? items;
-  // bool? isChecked = false;
+  HabitAPI habitServices = HabitAPI();
 
   @override
   void initState() {
     super.initState();
-    Map<String, dynamic> jwtDecodedToken =
-        JwtDecoder.decode(SharedPrefs.accessToken);
-    userId = jwtDecodedToken['_id'];
     // Difficulty
-    levelList.add(RadioModel(true, 'Trivial', 'trivial_off', 'trivial_on'));
+    levelList.add(RadioModel(false, 'Trivial', 'trivial_off', 'trivial_on'));
     levelList.add(RadioModel(false, 'Easy', 'easy_off', 'easy_on'));
     levelList.add(RadioModel(false, 'Medium', 'medium_off', 'medium_on'));
     levelList.add(RadioModel(false, 'Hard', 'hard_off', 'hard_on'));
+    for (var i in levelList) {
+      if (i.buttonText == widget.task?.habit_difficulty) {
+        i.isSelected = true;
+        _habitDifficulty.text = i.buttonText;
+      }
+    }
 
     // Counter
-    counterList.add(RadioModel(true, 'Daily', '', ''));
+    counterList.add(RadioModel(false, 'Daily', '', ''));
     counterList.add(RadioModel(false, 'Weekly', '', ''));
     counterList.add(RadioModel(false, 'Monthly', '', ''));
-  }
-
-  void addHabit() async {
-    if (_habitTitle.text.isNotEmpty) {
-      var reqBody = {
-        "userId": userId,
-        "title": _habitTitle.text,
-        "note": _habitNotes.text,
-        "difficulty": _habitDifficulty.text,
-        "resetCounter": _habitResetCounter.text,
-        "counter": 0
-      };
-
-      var response = await http.post(Uri.parse(AppConstant.add_habit),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(reqBody));
-
-      var jsonResponse = jsonDecode(response.body);
-
-      print(jsonResponse['status'] + '\n' + reqBody.toString());
-
-      if (jsonResponse['status'] == 'success') {
-        _habitNotes.clear();
-        _habitNotes.clear();
-        Navigator.pop(context);
-      } else {
-        print(jsonResponse['message']);
+    for (var i in counterList) {
+      if (i.buttonText == widget.task?.habit_resetCounter) {
+        i.isSelected = true;
+        _habitResetCounter.text = i.buttonText;
       }
     }
   }
 
-  void deleteItem(id) async {
-    var regBody = {"id": id};
+  void addHabit() async {
+    if (_habitTitle.text.isNotEmpty) {
+      final body = HabitModel(
+          userId: SharedPrefs.UserID,
+          title: _habitTitle.text.trim(),
+          note: _habitNotes.text.trim(),
+          difficulty: _habitDifficulty.text,
+          resetCounter: _habitResetCounter.text,
+          counter: 0);
+      await habitServices.addHabitTask(body).then((response) {
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          if (jsonResponse['status']) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => const Home()));
+          }
+        } else {
+          final data = jsonDecode(response.body);
+          final message = data['message'];
+          print(message);
+        }
+      });
+    }
+  }
 
-    var response = await http.post(Uri.parse(AppConstant.delete_habit),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(regBody));
+  void deleteItem(String id) async {
+    await habitServices.deleteHabitTask(id).then((response) {
+      if (response.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Home()));
+      } else {
+        final data = jsonDecode(response.body);
+        final message = data['message'];
+        print(message);
+      }
+    });
+  }
 
-    var jsonResponse = jsonDecode(response.body);
-    if (jsonResponse['status']) {
-      // getHabitList(userId);
+  void updateItem() async {
+    if (_habitTitle.text.isNotEmpty) {
+      final body = HabitModel(
+          id: widget.task?.habit_id,
+          userId: SharedPrefs.UserID,
+          title: _habitTitle.text.trim(),
+          note: _habitNotes.text.trim(),
+          difficulty: _habitDifficulty.text,
+          resetCounter: _habitResetCounter.text,
+          counter: widget.task?.counter);
+      await habitServices
+          .updateHabitTask(body, widget.task?.habit_id)
+          .then((response) {
+        if (response.statusCode == 200) {
+          jsonDecode(response.body);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => const Home()));
+        } else {
+          final data = jsonDecode(response.body);
+          final message = data['message'];
+          print(message);
+        }
+      });
     }
   }
 
@@ -89,22 +122,43 @@ class _FormHabitState extends State<FormHabit> {
     return Scaffold(
         backgroundColor: const Color(0xFF1C1C1C),
         appBar: AppBar(
-          title:
-              const Text('Create Habit', style: TextStyle(color: Colors.white)),
-          backgroundColor: const Color(0xFF6132B4),
-          iconTheme: const IconThemeData(color: Colors.white),
-          actions: [
-            TextButton(
-              style: TextButton.styleFrom(
-                  padding: const EdgeInsets.only(right: 25)),
-              onPressed: () {
-                addHabit();
-              },
-              child: const Text('CREATE',
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
-            ),
-          ],
-        ),
+            title: const Text('Create Habit',
+                style: TextStyle(color: Colors.white)),
+            backgroundColor: const Color(0xFF6132B4),
+            iconTheme: const IconThemeData(color: Colors.white),
+            // ignore: unnecessary_null_comparison
+            actions: widget.task != null
+                ? <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.only(right: 25)),
+                      onPressed: () {
+                        deleteItem(widget.task?.habit_id);
+                      },
+                      child: const Text('DELETE',
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.only(right: 25)),
+                      onPressed: () {
+                        updateItem();
+                      },
+                      child: const Text('UPDATE',
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
+                    ),
+                  ]
+                : <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          padding: const EdgeInsets.only(right: 25)),
+                      onPressed: () {
+                        addHabit();
+                      },
+                      child: const Text('CREATE',
+                          style: TextStyle(color: Colors.white, fontSize: 18)),
+                    )
+                  ]),
         body: ListView(
           children: [
             Container(
@@ -148,7 +202,7 @@ class _FormHabitState extends State<FormHabit> {
                 )),
             const SizedBox(height: 20),
             Container(
-              height: 450,
+              height: 400,
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: <Widget>[
@@ -170,7 +224,6 @@ class _FormHabitState extends State<FormHabit> {
                               overlayColor: WidgetStateProperty.resolveWith(
                                   (states) => Colors.transparent),
                               onTap: () {
-                                print(e.buttonText);
                                 _habitDifficulty.text = e.buttonText;
                                 setState(() {
                                   for (var element in levelList) {
@@ -198,11 +251,9 @@ class _FormHabitState extends State<FormHabit> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: counterList
                         .map((e) => InkWell(
-                              // focusColor: Colors.transparent,
                               overlayColor: WidgetStateProperty.resolveWith(
                                   (states) => Colors.transparent),
                               onTap: () {
-                                print(e.buttonText);
                                 _habitResetCounter.text = e.buttonText;
                                 setState(() {
                                   for (var element in counterList) {

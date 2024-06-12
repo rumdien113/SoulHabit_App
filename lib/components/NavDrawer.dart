@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_habit/pages/auth/welcome_screen.dart';
+import 'package:soul_habit/services/local/shared_prefs.dart';
 
 class NavDrawer extends StatelessWidget {
   const NavDrawer({super.key});
@@ -10,17 +11,17 @@ class NavDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: [
-          const UserAccountsDrawerHeader(
-            accountName: Text('rumdien113'),
-            accountEmail: Text('rumdien113@gmail.com'),
-            currentAccountPicture: CircleAvatar(
+          UserAccountsDrawerHeader(
+            accountName: Text(SharedPrefs.Username ?? 'username'),
+            accountEmail: Text(SharedPrefs.Email ?? 'email'),
+            currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
               child: Text(
                 'R',
                 style: TextStyle(fontSize: 40.0),
               ),
             ),
-            decoration: BoxDecoration(color: Color(0xFF1C1C1C)),
+            decoration: const BoxDecoration(color: Color(0xFF1C1C1C)),
           ),
           ListTile(
             leading: const Icon(Icons.logout),

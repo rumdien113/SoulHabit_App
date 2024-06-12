@@ -4,6 +4,7 @@ import 'package:soul_habit/pages/form/form_daily.dart';
 import 'package:soul_habit/pages/form/form_habit.dart';
 import 'package:soul_habit/pages/form/form_todo.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
+import '../../models/task_models/habit.model.dart';
 import 'daily.dart';
 import 'habit.dart';
 import 'todo.dart';
@@ -18,10 +19,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late String username = SharedPrefs.username;
-  int currentTab = 0;
-  final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = const Habit();
   late List<Widget> screens;
+  HabitModel? habitModel;
+  final PageStorageBucket bucket = PageStorageBucket();
+  int currentTab = 0;
+  Widget currentScreen = const Habit();
 
   @override
   void initState() {
@@ -43,7 +45,7 @@ class _HomeState extends State<Home> {
       backgroundColor: const Color(0xFF1C1C1C),
       drawer: const NavDrawer(),
       appBar: AppBar(
-        title: Text(SharedPrefs.Username ?? '',
+        title: Text(SharedPrefs.Username ?? 'username',
             style: const TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF1C1C1C),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -58,11 +60,11 @@ class _HomeState extends State<Home> {
           switch (currentTab) {
             case 0:
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormHabit()));
+                  MaterialPageRoute(builder: (context) => const FormHabit(null)));
               break;
             case 1:
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormDaily()));
+                  MaterialPageRoute(builder: (context) => const FormDaily(null)));
               break;
             case 2:
               Navigator.push(context,
@@ -121,7 +123,7 @@ class _HomeState extends State<Home> {
                 minWidth: 40,
                 onPressed: () {
                   setState(() {
-                    currentScreen = Daily();
+                    currentScreen = const Daily();
                     currentTab = 1;
                   });
                 },
@@ -146,7 +148,7 @@ class _HomeState extends State<Home> {
                 minWidth: 40,
                 onPressed: () {
                   setState(() {
-                    currentScreen = ToDo();
+                    currentScreen = const ToDo();
                     currentTab = 2;
                   });
                 },
@@ -171,7 +173,7 @@ class _HomeState extends State<Home> {
                 minWidth: 40,
                 onPressed: () {
                   setState(() {
-                    currentScreen = Shop();
+                    currentScreen = const Shop();
                     currentTab = 3;
                   });
                 },
