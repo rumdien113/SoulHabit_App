@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pretty_http_logger/pretty_http_logger.dart';
-import 'package:soul_habit/models/habit.model.dart';
+import 'package:soul_habit/models/task_models/habit.model.dart';
 import 'package:soul_habit/utils/app_constant.dart';
 
 abstract class HabitServices {

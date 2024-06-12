@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
 
-import '../models/habit.model.dart';
+import '../models/task_models/habit.model.dart';
 import '../pages/form/form_habit.dart';
 
 class TaskHabit extends StatefulWidget {

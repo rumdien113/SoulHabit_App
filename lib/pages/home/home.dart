@@ -4,7 +4,7 @@ import 'package:soul_habit/pages/form/form_daily.dart';
 import 'package:soul_habit/pages/form/form_habit.dart';
 import 'package:soul_habit/pages/form/form_todo.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
-import '../../models/habit.model.dart';
+import '../../models/task_models/habit.model.dart';
 import 'daily.dart';
 import 'habit.dart';
 import 'todo.dart';
@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
               break;
             case 1:
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormDaily()));
+                  MaterialPageRoute(builder: (context) => const FormDaily(null)));
               break;
             case 2:
               Navigator.push(context,

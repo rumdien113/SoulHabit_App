@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:soul_habit/components/task_habit.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
-import 'package:soul_habit/models/habit.model.dart';
+import 'package:soul_habit/models/task_models/habit.model.dart';
 
 class Habit extends StatefulWidget {
   const Habit({super.key});

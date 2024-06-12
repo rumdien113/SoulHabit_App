@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:soul_habit/models/habit.model.dart';
+import 'package:soul_habit/models/task_models/habit.model.dart';
 import 'package:soul_habit/pages/home/home.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
@@ -105,11 +105,9 @@ class _FormHabitState extends State<FormHabit> {
           .updateHabitTask(body, widget.task?.habit_id)
           .then((response) {
         if (response.statusCode == 200) {
-          final jsonResponse = jsonDecode(response.body);
-          // if (jsonResponse['status'] == true) {
+          jsonDecode(response.body);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => const Home()));
-          // }
         } else {
           final data = jsonDecode(response.body);
           final message = data['message'];
@@ -204,7 +202,7 @@ class _FormHabitState extends State<FormHabit> {
                 )),
             const SizedBox(height: 20),
             Container(
-              height: 450,
+              height: 400,
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: <Widget>[
