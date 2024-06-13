@@ -7,9 +7,7 @@ class DailyModel {
   final DateTime? startDate;
   final String? repeats;
   final int? every;
-  final int? counterRepeat;
-  final int? counterEvery;
-  final int? counterTotal;
+  final int? counter;
 
   DailyModel({
     this.id,
@@ -20,9 +18,7 @@ class DailyModel {
     this.startDate,
     this.repeats,
     this.every,
-    this.counterRepeat,
-    this.counterEvery,
-    this.counterTotal,
+    this.counter,
   });
 
   factory DailyModel.fromJson(Map<String, dynamic> json) {
@@ -32,12 +28,10 @@ class DailyModel {
       title: json['title'] as String?,
       note: json['note'] as String?,
       difficulty: json['difficulty'] as String?,
-      startDate: json['startDate'] as DateTime?,
+      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
       repeats: json['repeats'] as String?,
       every: json['every'] as int?,
-      counterRepeat: json['counterRepeat'] as int?,
-      counterEvery: json['counterEvery'] as int?,
-      counterTotal: json['counterTotal'] as int?,
+      counter: json['counter'] as int?,
     );
   }
 
@@ -48,12 +42,10 @@ class DailyModel {
       'title': title,
       'note': note,
       'difficulty': difficulty,
-      'startDate': startDate,
+      'startDate': startDate?.toIso8601String(),
       'repeats': repeats,
       'every': every,
-      'counterRepeat': counterRepeat,
-      'counterEvery': counterEvery,
-      'counterTotal': counterTotal,
+      'counter': counter,
     };
   }
 
@@ -65,9 +57,7 @@ class DailyModel {
   get daily_startDate => startDate;
   get daily_repeats => repeats;
   get daily_every => every;
-  get daily_counterRepeat => counterRepeat;
-  get daily_counterEvery => counterEvery;
-  get daily_counterTotal => counterTotal;
+  get daily_counter => counter;
 
   set daily_id(id) => id = id;
   set daily_userId(userId) => userId = userId;
@@ -77,12 +67,10 @@ class DailyModel {
   set daily_startDate(startDate) => startDate = startDate;
   set daily_repeats(repeats) => repeats = repeats;
   set daily_every(every) => every = every;
-  set daily_counterRepeat(counterRepeat) => counterRepeat = counterRepeat;
-  set daily_counterEvery(counterEvery) => counterEvery = counterEvery;
-  set daily_counterTotal(counterTotal) => counterTotal = counterTotal;
+  set daily_counter(counter) => counter = counter;
 
   @override
   String toString() {
-    return 'HabitModel{ id: $id, userId: $userId, $title, note: $note, difficulty: $difficulty, startDate: $startDate, repeats: $repeats, every: $every, counterRepeat: $counterRepeat, counterEvery: $counterEvery, counterTotal: $counterTotal }';
+    return 'HabitModel{ id: $id, userId: $userId, title: $title, note: $note, difficulty: $difficulty, startDate: $startDate, repeats: $repeats, every: $every, counter: $counter }';
   }
 }

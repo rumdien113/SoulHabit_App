@@ -1,7 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:intl/find_locale.dart';
+import 'package:intl/intl.dart';
 import '../../models/task_models/daily.model.dart';
+import '../../services/local/shared_prefs.dart';
+import '../../services/remote/daily_services.dart';
+import '../home/home.dart';
 
 class FormDaily extends StatefulWidget {
   const FormDaily(this.task, {super.key});
@@ -21,7 +26,8 @@ class _FormDailyState extends State<FormDaily> {
   late final TextEditingController _dailyStartDate = TextEditingController(
       text: DateFormat('MMM d, yyyy').format(DateTime.now()));
   late final TextEditingController _dailyRepeats = TextEditingController();
-  late final TextEditingController _dailyEvery = TextEditingController();
+  late final TextEditingController _dailyEvery =
+      TextEditingController(text: '1');
 
   //array
   final List<String> _repeatList = [];
@@ -29,7 +35,10 @@ class _FormDailyState extends State<FormDaily> {
   List? items;
 
   //var
-  String? _curRepeat = '';
+  String _curRepeat = '';
+
+  //service
+  final DailyAPI dailyService = DailyAPI();
 
   @override
   void initState() {
@@ -54,6 +63,67 @@ class _FormDailyState extends State<FormDaily> {
         i.isSelected = true;
         _dailyDifficulty.text = i.buttonText;
       }
+    }
+  }
+
+  void addTask() async {
+    if (_dailyTitle.text.isNotEmpty) {
+      // Lấy ngày từ _dailyStartDate và đảm bảo múi giờ UTC
+      final DateTime parsedDate =
+          DateFormat("MMM dd, yyyy").parse(_dailyStartDate.text);
+
+      // Chuyển đổi ngày sang UTC để tránh lệch múi giờ
+      final DateTime utcDate =
+          DateTime.utc(parsedDate.year, parsedDate.month, parsedDate.day);
+
+      final body = DailyModel(
+        userId: SharedPrefs.UserID,
+        title: _dailyTitle.text.trim(),
+        note: _dailyNotes.text.trim(),
+        difficulty: _dailyDifficulty.text,
+        startDate: utcDate,
+        repeats: _curRepeat,
+        every: int.parse(_dailyEvery.text),
+      );
+      print("Request Body: ${body.toJson()}");
+
+      try {
+        final response = await dailyService.addDailyTask(body);
+        print("Response Status Code: ${response.statusCode}");
+        print("Response Body: ${response.body}");
+
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          if (jsonResponse['status']) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => const Home()));
+          } else {
+            print("Server responded with an error: ${jsonResponse['message']}");
+          }
+        } else {
+          final data = jsonDecode(response.body);
+          final message = data['message'];
+          print("Error Message: $message");
+        }
+      } catch (e) {
+        print("An error occurred: $e");
+      }
+    } else {
+      print("Title is empty. Cannot add task.");
+    }
+  }
+
+  Future<void> _selectDate() async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(3000),
+    );
+    if (picked != null) {
+      setState(() {
+        _dailyStartDate.text = DateFormat('MMM d, yyyy').format(picked);
+      });
     }
   }
 
@@ -98,8 +168,7 @@ class _FormDailyState extends State<FormDaily> {
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(right: 25)),
                     onPressed: () {
-                      print("Create");
-                      // addHabit();
+                      addTask();
                     },
                     child: const Text('CREATE',
                         style: TextStyle(color: Colors.white, fontSize: 18)),
@@ -192,21 +261,26 @@ class _FormDailyState extends State<FormDaily> {
               ),
               const SizedBox(height: 10),
               // Start Date
-              TextFormField(
-                onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2024),
-                    lastDate: DateTime(3000),
-                  );
-                  if (pickedDate != null) {
-                    // format the picked date and set it as the field's value
-                    String formattedDate =
-                        DateFormat('MMM d, yyyy').format(pickedDate);
-                    _dailyStartDate.text = formattedDate;
-                  }
+              TextField(
+                onTap: () {
+                  _selectDate();
                 },
+                // onTap: () async {
+                //   DateTime? pickedDate = await showDatePicker(
+                //     context: context,
+                //     initialDate: _dailyStartDate.text.isNotEmpty
+                //         ? DateTime.parse(_dailyStartDate.text)
+                //         : DateTime.now(),
+                //     firstDate: DateTime(2024),
+                //     lastDate: DateTime(3000),
+                //   );
+                //   if (pickedDate != null) {
+                //     // format the picked date and set it as the field's value
+                //     String formattedDate =
+                //         DateFormat('MMM d, yyyy').format(pickedDate);
+                //     _dailyStartDate.text = formattedDate;
+                //   }
+                // },
                 controller: _dailyStartDate,
                 readOnly: true,
                 style: const TextStyle(color: Colors.white),
@@ -225,17 +299,20 @@ class _FormDailyState extends State<FormDaily> {
                     child: DropdownButtonFormField(
                   items: _repeatList.map((e) {
                     return DropdownMenuItem<String>(
-                      value: e,
-                      child: Text(
-                        e,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
+                        value: e,
+                        child: Text(
+                          e,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ));
                   }).toList(),
                   value: _curRepeat,
-                  onChanged: (value) {
+                  onChanged: (String? value) {
+                    // _dailyRepeats.text = value.toString();
                     setState(() {
                       _curRepeat = value.toString();
+                      _dailyRepeats.text = _curRepeat;
                     });
                   },
                   decoration: const InputDecoration(
