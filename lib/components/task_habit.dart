@@ -13,7 +13,6 @@ class TaskHabit extends StatefulWidget {
 }
 
 class _TaskHabitState extends State<TaskHabit> {
-  bool isChecked = false;
   int _counter = 0;
 
   @override

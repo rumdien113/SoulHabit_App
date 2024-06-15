@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:intl/find_locale.dart';
 import 'package:intl/intl.dart';
+import 'package:soul_habit/pages/home/daily.dart';
 import '../../models/task_models/daily.model.dart';
 import '../../services/local/shared_prefs.dart';
 import '../../services/remote/daily_services.dart';
@@ -24,10 +24,12 @@ class _FormDailyState extends State<FormDaily> {
       TextEditingController(text: widget.task?.daily_note);
   late final TextEditingController _dailyDifficulty = TextEditingController();
   late final TextEditingController _dailyStartDate = TextEditingController(
-      text: DateFormat('MMM d, yyyy').format(DateTime.now()));
+      text: widget.task?.daily_startDate != null
+          ? DateFormat('MMM d, yyyy').format(widget.task!.daily_startDate)
+          : DateFormat('MMM d, yyyy').format(DateTime.now()));
   late final TextEditingController _dailyRepeats = TextEditingController();
   late final TextEditingController _dailyEvery =
-      TextEditingController(text: '1');
+      TextEditingController(text: widget.task?.daily_every.toString());
 
   //array
   final List<String> _repeatList = [];
@@ -77,14 +79,14 @@ class _FormDailyState extends State<FormDaily> {
           DateTime.utc(parsedDate.year, parsedDate.month, parsedDate.day);
 
       final body = DailyModel(
-        userId: SharedPrefs.UserID,
-        title: _dailyTitle.text.trim(),
-        note: _dailyNotes.text.trim(),
-        difficulty: _dailyDifficulty.text,
-        startDate: utcDate,
-        repeats: _curRepeat,
-        every: int.parse(_dailyEvery.text),
-      );
+          userId: SharedPrefs.UserID,
+          title: _dailyTitle.text.trim(),
+          note: _dailyNotes.text.trim(),
+          difficulty: _dailyDifficulty.text,
+          startDate: utcDate,
+          repeats: _curRepeat,
+          every: int.parse(_dailyEvery.text),
+          counter: 0);
       print("Request Body: ${body.toJson()}");
 
       try {
@@ -110,6 +112,53 @@ class _FormDailyState extends State<FormDaily> {
       }
     } else {
       print("Title is empty. Cannot add task.");
+    }
+  }
+
+  void deleteItem(String id) async {
+    await dailyService.deleteDailyTask(id).then((response) {
+      if (response.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Home()));
+      } else {
+        final data = jsonDecode(response.body);
+        final message = data['message'];
+        print(message);
+      }
+    });
+  }
+
+  void updateItem() async {
+    if (_dailyTitle.text.isNotEmpty) {
+      final DateTime parsedDate =
+          DateFormat("MMM dd, yyyy").parse(_dailyStartDate.text);
+      final DateTime utcDate =
+          DateTime.utc(parsedDate.year, parsedDate.month, parsedDate.day);
+
+      final body = DailyModel(
+          id: widget.task?.daily_id,
+          userId: SharedPrefs.UserID,
+          title: _dailyTitle.text.trim(),
+          note: _dailyNotes.text.trim(),
+          difficulty: _dailyDifficulty.text,
+          startDate: utcDate,
+          repeats: _curRepeat,
+          every: int.parse(_dailyEvery.text),
+          counter: widget.task?.counter);
+      print("Request Body: ${body.toJson()}");
+      await dailyService
+          .updateDailyTask(body, widget.task?.daily_id)
+          .then((response) {
+        if (response.statusCode == 200) {
+          jsonDecode(response.body);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => const Home()));
+        } else {
+          final data = jsonDecode(response.body);
+          final message = data['message'];
+          print(message);
+        }
+      });
     }
   }
 
@@ -146,8 +195,8 @@ class _FormDailyState extends State<FormDaily> {
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(right: 25)),
                     onPressed: () {
-                      print("Delete");
-                      // deleteItem(widget.task?.habit_id);
+                      // print("Delete");
+                      deleteItem(widget.task?.daily_id);
                     },
                     child: const Text('DELETE',
                         style: TextStyle(color: Colors.white, fontSize: 18)),
@@ -156,8 +205,8 @@ class _FormDailyState extends State<FormDaily> {
                     style: TextButton.styleFrom(
                         padding: const EdgeInsets.only(right: 25)),
                     onPressed: () {
-                      print("Update");
-                      // updateItem();
+                      // print("Update");
+                      updateItem();
                     },
                     child: const Text('UPDATE',
                         style: TextStyle(color: Colors.white, fontSize: 18)),

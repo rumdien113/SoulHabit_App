@@ -69,9 +69,9 @@ class HabitAPI implements HabitServices {
   }
 
   @override
-  Future<http.Response> counter(String id, String slug) async {
+  Future<http.Response> counter(String taskId, String slug) async {
     final response = await _httpClient
-        .put(Uri.parse(AppConstant.counter(id, slug)), headers: {
+        .put(Uri.parse(AppConstant.counter(taskId, slug, 'habit')), headers: {
       'content-Type': 'application/json; charset=UTF-8',
       'Accept': 'application/json'
     });

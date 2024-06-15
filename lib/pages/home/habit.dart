@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:soul_habit/components/task_habit.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
 import 'package:soul_habit/services/local/shared_prefs.dart';
-import 'package:soul_habit/models/task_models/habit.model.dart';
+
+import '../../models/task_models/habit.model.dart';
 
 class Habit extends StatefulWidget {
   const Habit({super.key});
@@ -15,7 +16,7 @@ class Habit extends StatefulWidget {
 
 class _HabitState extends State<Habit> {
   List<HabitModel> taskList = [];
-  HabitAPI habitAPI = HabitAPI();
+  HabitAPI habitServices = HabitAPI();
 
   @override
   void initState() {
@@ -24,7 +25,7 @@ class _HabitState extends State<Habit> {
   }
 
   void _getHabitList() {
-    habitAPI.getHabitList(SharedPrefs.UserID!).then((response) {
+    habitServices.getHabitList(SharedPrefs.UserID!).then((response) {
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         List<dynamic> listJson = jsonResponse['success'];

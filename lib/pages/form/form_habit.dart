@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:soul_habit/models/task_models/habit.model.dart';
-import 'package:soul_habit/pages/home/home.dart';
-import 'package:soul_habit/services/local/shared_prefs.dart';
+ import 'package:soul_habit/services/local/shared_prefs.dart';
 import 'package:soul_habit/services/remote/habit_services.dart';
+
+import '../home/home.dart';
 
 class FormHabit extends StatefulWidget {
   const FormHabit(this.task, {super.key});

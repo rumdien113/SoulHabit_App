@@ -8,6 +8,7 @@ class DailyModel {
   final String? repeats;
   final int? every;
   final int? counter;
+  final bool? state;
 
   DailyModel({
     this.id,
@@ -19,6 +20,7 @@ class DailyModel {
     this.repeats,
     this.every,
     this.counter,
+    this.state
   });
 
   factory DailyModel.fromJson(Map<String, dynamic> json) {
@@ -28,10 +30,12 @@ class DailyModel {
       title: json['title'] as String?,
       note: json['note'] as String?,
       difficulty: json['difficulty'] as String?,
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
+      startDate:
+          json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
       repeats: json['repeats'] as String?,
       every: json['every'] as int?,
       counter: json['counter'] as int?,
+      state: json['state'] as bool?
     );
   }
 
@@ -46,6 +50,7 @@ class DailyModel {
       'repeats': repeats,
       'every': every,
       'counter': counter,
+      'state': state
     };
   }
 
@@ -58,6 +63,7 @@ class DailyModel {
   get daily_repeats => repeats;
   get daily_every => every;
   get daily_counter => counter;
+  get daily_state => state;
 
   set daily_id(id) => id = id;
   set daily_userId(userId) => userId = userId;
@@ -68,9 +74,10 @@ class DailyModel {
   set daily_repeats(repeats) => repeats = repeats;
   set daily_every(every) => every = every;
   set daily_counter(counter) => counter = counter;
+  set daily_state(state) => state = state;
 
   @override
   String toString() {
-    return 'HabitModel{ id: $id, userId: $userId, title: $title, note: $note, difficulty: $difficulty, startDate: $startDate, repeats: $repeats, every: $every, counter: $counter }';
+    return 'HabitModel{ id: $id, userId: $userId, title: $title, note: $note, difficulty: $difficulty, startDate: $startDate, repeats: $repeats, every: $every, counter: $counter, state: $state}';
   }
 }
