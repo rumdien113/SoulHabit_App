@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light(),
         home: (token != null && JwtDecoder.isExpired(token) == false)
-            ? const Home()
+            ? const Home(0)
             : const WelcomeScreen());
   }
 }

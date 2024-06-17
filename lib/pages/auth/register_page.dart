@@ -39,8 +39,8 @@ class _RegisterPage extends State<RegisterPage> {
       print(jsonResponse['status']);
 
       if (jsonResponse['status']) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const LoginPage()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
       } else {
         print("something went wrong");
       }
@@ -69,7 +69,8 @@ class _RegisterPage extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.transparent,
@@ -101,7 +102,7 @@ class _RegisterPage extends State<RegisterPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildInputFiles() {
@@ -192,9 +193,7 @@ class _RegisterPage extends State<RegisterPage> {
                       textColor: Colors.white,
                       fontSize: 16.0);
                 }
-                bool usernameValid = RegExp(
-                        r"/^[^\s]+$/")
-                    .hasMatch(value);
+                bool usernameValid = RegExp(r"/^[^\s]+$/").hasMatch(value);
                 if (!usernameValid) {
                   Fluttertoast.showToast(
                       msg: "Email is not valid",
@@ -320,28 +319,28 @@ class _RegisterPage extends State<RegisterPage> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              icon: SizedBox(
-                width: 20,
-                height: 20,
-                child: Image.asset("assets/icons/ic_google.png"),
-              ),
-              onPressed: () => print("Hello Google"),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(200, 70),
-                backgroundColor: const Color.fromARGB(170, 179, 179, 179),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              label: const Text(
-                "Login with Google",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+            // ElevatedButton.icon(
+            //   icon: SizedBox(
+            //     width: 20,
+            //     height: 20,
+            //     child: Image.asset("assets/icons/ic_google.png"),
+            //   ),
+            //   onPressed: () => print("Hello Google"),
+            //   style: ElevatedButton.styleFrom(
+            //     minimumSize: const Size(200, 70),
+            //     backgroundColor: const Color.fromARGB(170, 179, 179, 179),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(30),
+            //     ),
+            //   ),
+            //   label: const Text(
+            //     "Login with Google",
+            //     style: TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 20,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

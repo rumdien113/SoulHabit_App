@@ -68,7 +68,7 @@ class _FormHabitState extends State<FormHabit> {
           final jsonResponse = jsonDecode(response.body);
           if (jsonResponse['status']) {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const Home()));
+                context, MaterialPageRoute(builder: (context) => const Home(0)));
           }
         } else {
           final data = jsonDecode(response.body);
@@ -83,7 +83,7 @@ class _FormHabitState extends State<FormHabit> {
     await habitServices.deleteHabitTask(id).then((response) {
       if (response.statusCode == 200) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Home()));
+            context, MaterialPageRoute(builder: (context) => const Home(0)));
       } else {
         final data = jsonDecode(response.body);
         final message = data['message'];
@@ -108,7 +108,7 @@ class _FormHabitState extends State<FormHabit> {
         if (response.statusCode == 200) {
           jsonDecode(response.body);
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Home()));
+              context, MaterialPageRoute(builder: (context) => const Home(0)));
         } else {
           final data = jsonDecode(response.body);
           final message = data['message'];

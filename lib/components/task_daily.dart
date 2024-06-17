@@ -90,9 +90,6 @@ class _TaskDailyState extends State<TaskDaily> {
                       _Counter('decrease');
                       _updateState('false');
                     }
-                    // setState(() {
-                    //   isChecked = value!;
-                    // });
                   }),
             ),
             const SizedBox(width: 10),

@@ -13,8 +13,10 @@ class _ShopState extends State<Shop> {
     return const Scaffold(
       backgroundColor: Color(0xFF1C1C1C),
       body: Center(
-        child: Text('Shop screen',
-            style: TextStyle(fontSize: 40, color: Colors.white)),
+        child: Text(
+            'Tính năng này đang được phát triển và sẽ ra mắt trong thời gian tới! Bạn vui lòng quay lại sau nhé!',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+            textAlign: TextAlign.center),
       ),
     );
   }

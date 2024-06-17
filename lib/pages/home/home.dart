@@ -11,8 +11,9 @@ import 'todo.dart';
 import 'shop.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home(this.indexPage, {super.key});
 
+  final int indexPage;
   @override
   State<Home> createState() => _HomeState();
 }
@@ -28,15 +29,15 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    currentTab = widget.indexPage;
 
-    screens = const [
+    screens = const <Widget>[
       Habit(),
       Daily(),
       ToDo(),
       Shop(),
     ];
-
-    currentScreen = screens[0];
+    currentScreen = screens[widget.indexPage];
   }
 
   @override
@@ -59,16 +60,22 @@ class _HomeState extends State<Home> {
         onPressed: () {
           switch (currentTab) {
             case 0:
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormHabit(null)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FormHabit(null)));
               break;
             case 1:
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormDaily(null)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FormDaily(null)));
               break;
             case 2:
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const FormTodo()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FormTodo(null)));
               break;
           }
         },
@@ -131,7 +138,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(
-                      Icons.dashboard,
+                      Icons.calendar_month_outlined,
                       size: 30,
                       color: currentTab == 1 ? Colors.blue : Colors.grey,
                     ),
@@ -156,7 +163,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(
-                      Icons.dashboard,
+                      Icons.check_circle_outline,
                       size: 30,
                       color: currentTab == 2 ? Colors.blue : Colors.grey,
                     ),
@@ -181,7 +188,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(
-                      Icons.dashboard,
+                      Icons.add_shopping_cart,
                       size: 30,
                       color: currentTab == 3 ? Colors.blue : Colors.grey,
                     ),

@@ -48,7 +48,10 @@ class _LoginPageState extends State<LoginPage> {
           final userID = res['_id'];
           final username = res['username'];
           final email = res['email'];
-          if (token != null && userID != null && username != null && email != null) {
+          if (token != null &&
+              userID != null &&
+              username != null &&
+              email != null) {
             await SharedPrefs.setToken(token);
             SharedPrefs.setUserId(userID);
             SharedPrefs.setUsername(username);
@@ -69,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
           );
 
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Home()));
+              context, MaterialPageRoute(builder: (context) => const Home(0)));
         } else {
           final errorResponse = jsonDecode(response.body);
           Fluttertoast.showToast(
@@ -148,7 +151,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.transparent,
@@ -183,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildInputFiles() {
@@ -286,20 +290,20 @@ class _LoginPageState extends State<LoginPage> {
               },
             ),
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => print("forgot password"),
-                child: const Text(
-                  'Forgot Password?',
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 17,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: TextButton(
+            //     onPressed: () => print("forgot password"),
+            //     child: const Text(
+            //       'Forgot Password?',
+            //       style: TextStyle(
+            //         fontWeight: FontWeight.normal,
+            //         fontSize: 17,
+            //         color: Colors.white,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () => _submitLogin(),
@@ -319,29 +323,29 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              icon: SizedBox(
-                width: 20,
-                height: 20,
-                child: Image.asset("assets/icons/ic_google.png"),
-              ),
-              // ignore: avoid_print
-              onPressed: () => print("Hello Google"),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(200, 70),
-                backgroundColor: const Color.fromARGB(170, 179, 179, 179),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              label: const Text(
-                "Login with Google",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+            // ElevatedButton.icon(
+            //   icon: SizedBox(
+            //     width: 20,
+            //     height: 20,
+            //     child: Image.asset("assets/icons/ic_google.png"),
+            //   ),
+            //   // ignore: avoid_print
+            //   onPressed: () => print("Hello Google"),
+            //   style: ElevatedButton.styleFrom(
+            //     minimumSize: const Size(200, 70),
+            //     backgroundColor: const Color.fromARGB(170, 179, 179, 179),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(30),
+            //     ),
+            //   ),
+            //   label: const Text(
+            //     "Login with Google",
+            //     style: TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 20,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:soul_habit/pages/home/daily.dart';
 import '../../models/task_models/daily.model.dart';
 import '../../services/local/shared_prefs.dart';
 import '../../services/remote/daily_services.dart';
@@ -34,7 +33,6 @@ class _FormDailyState extends State<FormDaily> {
   //array
   final List<String> _repeatList = [];
   final List<RadioModel> _levelList = [];
-  List? items;
 
   //var
   String _curRepeat = '';
@@ -86,7 +84,8 @@ class _FormDailyState extends State<FormDaily> {
           startDate: utcDate,
           repeats: _curRepeat,
           every: int.parse(_dailyEvery.text),
-          counter: 0);
+          counter: 0,
+          state: false);
       print("Request Body: ${body.toJson()}");
 
       try {
@@ -98,7 +97,7 @@ class _FormDailyState extends State<FormDaily> {
           final jsonResponse = jsonDecode(response.body);
           if (jsonResponse['status']) {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const Home()));
+                context, MaterialPageRoute(builder: (context) => const Home(1)));
           } else {
             print("Server responded with an error: ${jsonResponse['message']}");
           }
@@ -119,7 +118,7 @@ class _FormDailyState extends State<FormDaily> {
     await dailyService.deleteDailyTask(id).then((response) {
       if (response.statusCode == 200) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Home()));
+            context, MaterialPageRoute(builder: (context) => const Home(1)));
       } else {
         final data = jsonDecode(response.body);
         final message = data['message'];
@@ -152,7 +151,7 @@ class _FormDailyState extends State<FormDaily> {
         if (response.statusCode == 200) {
           jsonDecode(response.body);
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Home()));
+              context, MaterialPageRoute(builder: (context) => const Home(1)));
         } else {
           final data = jsonDecode(response.body);
           final message = data['message'];
