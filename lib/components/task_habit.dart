@@ -69,61 +69,66 @@ class _TaskHabitState extends State<TaskHabit> {
                 ),
                 child: const Icon(Icons.add_circle_outline)),
             // TEXT
-            TextButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15),
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: Colors.transparent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
+            Flexible(
+              child: TextButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.only(
+                        top: 15, bottom: 15, left: 10, right: 10),
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
                   ),
-                ),
-                onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FormHabit(widget.task)))
-                    },
-                child: Column(children: <Widget>[
-                  Expanded(
-                      child: SizedBox(
-                          width: 325,
-                          child: Text(widget.task.habit_title,
-                              maxLines: 6,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.ltr,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.white)))),
-                  Expanded(
-                      child: SizedBox(
-                          width: 325,
-                          child: Text(widget.task.habit_note,
-                              maxLines: 6,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.ltr,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.grey)))),
-                  Align(
-                      alignment: Alignment.bottomRight,
-                      child: SizedBox(
-                        width: 310,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const Icon(Icons.double_arrow_sharp,
-                                color: Colors.grey),
-                            Text(
-                              _counter.toString(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  color: Colors.grey, fontSize: 15),
-                            )
-                          ],
-                        ),
-                      )),
-                ])),
+                  onPressed: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FormHabit(widget.task)))
+                      },
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                            child: SizedBox(
+                                // width: 325,
+                                child: Text(widget.task.habit_title,
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    textDirection: TextDirection.ltr,
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Colors.white)))),
+                        Expanded(
+                            child: SizedBox(
+                                // width: 325,
+                                child: Text(widget.task.habit_note,
+                                    maxLines: 6,
+                                    overflow: TextOverflow.ellipsis,
+                                    textDirection: TextDirection.ltr,
+                                    style: const TextStyle(
+                                        fontSize: 18, color: Colors.grey)))),
+                        Align(
+                            alignment: Alignment.bottomRight,
+                            child: SizedBox(
+                              width: 310,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  const Icon(Icons.double_arrow_sharp,
+                                      color: Colors.grey),
+                                  Text(
+                                    _counter.toString(),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 15),
+                                  )
+                                ],
+                              ),
+                            )),
+                      ])),
+            ),
             // btn SUB
             ElevatedButton(
                 onPressed: () => _Counter('decrease'),

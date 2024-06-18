@@ -95,60 +95,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Future<void> _submitLogin() async {
-  //   if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-  //     final body = LoginRequestModel(
-  //       email: emailController.text.trim(),
-  //       password: passwordController.text,
-  //     );
-  //     await authServices.login(body).then((response) async {
-  //       if (response.statusCode == 200) {
-  //         final res = jsonDecode(response.body);
-  //         await SharedPrefs.setToken(res['token']);
-  //         SharedPrefs.setUserId(res['_id']);
-  //         SharedPrefs.setUsername(res['username']);
-  //         print('Token: ${SharedPrefs.accessToken}');
-  //         print('Token: ${SharedPrefs.userId}');
-  //         print('Token: ${SharedPrefs.username}');
-  //         Navigator.push(
-  //             context, MaterialPageRoute(builder: (context) => const Home()));
-  //       } else {
-  //         print('Something went wrong');
-  //       }
-  //     });
-  //   }
-  // }
-
-  // void loginUser() async {
-  //   try {
-  //     if (emailController.text.isNotEmpty &&
-  //         passwordController.text.isNotEmpty) {
-  //       var reqBody = {
-  //         "email": emailController.text,
-  //         "password": passwordController.text
-  //       };
-  //       print(reqBody);
-  //       var response = await http.post(Uri.parse(AppConstant.login),
-  //           headers: {"Content-Type": "application/json"},
-  //           body: jsonEncode(reqBody));
-  //       print('Response status: ${response.statusCode}');
-  //       print(response);
-  //       var jsonResponse = jsonDecode(response.body);
-  //       if (jsonResponse['status']) {
-  //         var myToken = jsonResponse['token'];
-  //         pref.setString('token', myToken);
-  //         print('Token: $myToken');
-  //         Navigator.push(context,
-  //             MaterialPageRoute(builder: (context) => Home()));
-  //       } else {
-  //         print('Something went wrong');
-  //       }
-  //     }
-  //   } on Exception catch (err) {
-  //     print(err);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -191,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildInputFiles() {
-    return ClipPath(
+    return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

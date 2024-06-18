@@ -94,61 +94,63 @@ class _TaskDailyState extends State<TaskDaily> {
             ),
             const SizedBox(width: 10),
             // TEXT
-            TextButton(
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: Colors.transparent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
+            Flexible(
+              child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
                   ),
-                ),
-                onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FormDaily(widget.task)))
-                    },
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                          width: 385,
-                          child: Text(widget.task.daily_title,
-                              maxLines: 6,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.ltr,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.white))),
-                      SizedBox(
-                          width: 385,
-                          child: Text(widget.task.daily_note,
-                              maxLines: 6,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.ltr,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.grey))),
-                      Align(
-                          alignment: Alignment.bottomRight,
-                          child: SizedBox(
-                            width: 385,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Icon(Icons.double_arrow_sharp,
-                                    color: Colors.grey),
-                                Text(
-                                  ' +$_counter',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 15),
-                                )
-                              ],
-                            ),
-                          )),
-                    ])),
+                  onPressed: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FormDaily(widget.task)))
+                      },
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                            // width: 385,
+                            child: Text(widget.task.daily_title,
+                                maxLines: 6,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.ltr,
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.white))),
+                        SizedBox(
+                            // width: 385,
+                            child: Text(widget.task.daily_note,
+                                maxLines: 6,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.ltr,
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.grey))),
+                        Align(
+                            alignment: Alignment.bottomRight,
+                            child: SizedBox(
+                              // width: 385,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  const Icon(Icons.double_arrow_sharp,
+                                      color: Colors.grey),
+                                  Text(
+                                    ' +$_counter',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 15),
+                                  )
+                                ],
+                              ),
+                            )),
+                      ])),
+            )
           ],
         ));
   }

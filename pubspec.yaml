@@ -43,6 +43,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   table_calendar: ^3.1.2
   intl: ^0.19.0
+  gif_view: ^0.4.4
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/icons/difficulty/
+    - assets/characters/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

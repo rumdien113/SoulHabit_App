@@ -1,6 +1,7 @@
 class AppConstant {
   AppConstant._();
-  static const baseAPI = 'http://localhost:3000';
+  static const baseAPI = 'http://192.168.1.10:3000';
+  // static const baseAPI = 'http://localhost:3000';
 
   // Auth
   static const register = '$baseAPI/register';

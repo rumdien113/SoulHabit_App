@@ -66,41 +66,43 @@ class _TaskTodoState extends State<TaskTodo> {
             ),
             const SizedBox(width: 10),
             // TEXT
-            TextButton(
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: Colors.transparent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
+            Flexible(
+              child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.transparent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
                   ),
-                ),
-                onPressed: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FormTodo(widget.task)))
-                    },
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                          width: 385,
-                          child: Text(widget.task.todo_title,
-                              maxLines: 6,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.ltr,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.white))),
-                      SizedBox(
-                          width: 385,
-                          child: Text(widget.task.todo_note,
-                              maxLines: 6,
-                              overflow: TextOverflow.ellipsis,
-                              textDirection: TextDirection.ltr,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.grey))),
-                    ])),
+                  onPressed: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FormTodo(widget.task)))
+                      },
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                            // width: 385,
+                            child: Text(widget.task.todo_title,
+                                maxLines: 6,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.ltr,
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.white))),
+                        SizedBox(
+                            // width: 385,
+                            child: Text(widget.task.todo_note,
+                                maxLines: 6,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.ltr,
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.grey))),
+                      ])),
+            )
           ],
         ));
   }
